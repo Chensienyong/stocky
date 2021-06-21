@@ -26,7 +26,7 @@ func (h *Handler) FetchDailyTimeSeries(w http.ResponseWriter, r *http.Request, p
 		return err
 	}
 	dailies := entity.CreateDailyBatch(stock.ID, dailyseries)
-	_, err = h.stocky.Postgres.InsertDailies(dailies)
+	err = h.stocky.Postgres.InsertDailies(dailies)
 	if err != nil {
 		Error(w, err)
 		return err

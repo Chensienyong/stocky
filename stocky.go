@@ -19,7 +19,7 @@ type PostgresMethod interface {
 	CreateStock(entity.Stock) (entity.Stock, error)
 
 	FetchDailySeriesByStock(int64) ([]entity.Daily, error)
-	InsertDailies([]entity.Daily) ([]entity.Daily, error)
+	InsertDailies([]entity.Daily) error
 	DeleteDailies(int64) error
 }
 

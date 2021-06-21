@@ -55,3 +55,15 @@ func TestWrite(t *testing.T) {
 	writer := Writer{}
 	assert.NotPanics(t, func() { response.Write(writer, "data", 200) })
 }
+
+func TestNewErr(t *testing.T) {
+	httpCode := 200
+	code     := 201
+	field    := "field"
+	message  := "message"
+
+	error := response.NewErr(httpCode, code, field, message)
+
+	assert.IsType(t, response.CustomError{}, error)
+	assert.Equal(t, httpCode, error.HTTPCode)
+}

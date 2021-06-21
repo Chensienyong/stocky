@@ -1,6 +1,7 @@
 package database
 
 import (
+	"github.com/chensienyong/stocky/customerror"
 	"github.com/chensienyong/stocky/entity"
 )
 
@@ -11,28 +12,26 @@ func (pg *Postgres) FetchDailySeriesByStock(stockID int64) ([]entity.Daily, erro
 
 	err := pg.Db.Table(TableDaily).Select("date,open,high,low,close,volume").Where("stock_id = ?", stockID).Order("date DESC").Find(&dailies)
 	if err.Error != nil {
-		return dailies, err.Error
+		return dailies, customerror.DBError
 	}
 
 	return dailies, nil
 }
 
-func (pg *Postgres) InsertDailies(dailies []entity.Daily) ([]entity.Daily, error) {
-	var newDailies []entity.Daily
-
-	err := pg.Db.Table(TableDaily).Create(&dailies).Scan(&newDailies)
+func (pg *Postgres) InsertDailies(dailies []entity.Daily) error {
+	err := pg.Db.Table(TableDaily).Create(&dailies)
 	if err.Error != nil {
-		return newDailies, err.Error
+		return customerror.DBError
 	}
 
-	return newDailies, nil
+	return nil
 }
 
 func (pg *Postgres) DeleteDailies(stockID int64) error {
 	err := pg.Db.Table(TableDaily).Where("stock_id = ?", stockID).Delete(entity.Daily{})
 
 	if err.Error != nil {
-		return err.Error
+		return customerror.RecordNotFound
 	}
 
 	return nil

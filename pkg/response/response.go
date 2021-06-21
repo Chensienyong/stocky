@@ -99,3 +99,13 @@ func Write(w http.ResponseWriter, result interface{}, status int) error {
 	w.WriteHeader(status)
 	return json.NewEncoder(w).Encode(result)
 }
+
+//NewErr is function to create custom error
+func NewErr(httpCode, code int, field, message string) CustomError {
+	return CustomError{
+		Message:  message,
+		Field:    field,
+		Code:     code,
+		HTTPCode: httpCode,
+	}
+}
