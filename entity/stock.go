@@ -17,8 +17,8 @@ func NewStock(stockSymbol string) Stock {
 	}
 }
 
-func NewStockDailyResponse(stock Stock, dailies []Daily) *StockDailyResponse {
-	return &StockDailyResponse{
+func NewStockDailyResponse(stock Stock, dailies []Daily) StockDailyResponse {
+	return StockDailyResponse{
 		Stock:       stock.StockSymbol,
 		DailySeries: NewDailiesResponse(dailies),
 	}

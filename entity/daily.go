@@ -52,8 +52,8 @@ func CreateDailyBatch(stockID int64, dailyResponse connection.DailyResponse) []D
 	return dailies
 }
 
-func NewDailyResponse(daily Daily) *DailyResponse {
-	return &DailyResponse{
+func NewDailyResponse(daily Daily) DailyResponse {
+	return DailyResponse{
 		Date:        daily.Date,
 		Open:        daily.Open,
 		High:        daily.High,
@@ -66,7 +66,7 @@ func NewDailyResponse(daily Daily) *DailyResponse {
 func NewDailiesResponse(dailies []Daily) []DailyResponse {
 	var dailiesResponse []DailyResponse
 	for _, daily := range dailies {
-		dailiesResponse = append(dailiesResponse, *NewDailyResponse(daily))
+		dailiesResponse = append(dailiesResponse, NewDailyResponse(daily))
 	}
 	return dailiesResponse
 }

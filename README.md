@@ -35,7 +35,7 @@ Stocky is the microservice for the Stock information.
   git clone git@github.com:chensienyong/stocky.git
   ```
 
-- Go to Arcade directory, then sync the vendor file
+- Go to Stocky directory, then sync the vendor file
 
   ```sh
   cd $GOPATH/src/github.com/chensienyong/stocky

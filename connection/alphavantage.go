@@ -28,7 +28,7 @@ type metadata struct {
 	TimeZone 	  string `json:"5. Time Zone,omitempty"`
 }
 
-type data struct {
+type Data struct {
 	Open   string `json:"1. open,omitempty"`
 	High   string `json:"2. high,omitempty"`
 	Low    string `json:"3. low,omitempty"`
@@ -38,7 +38,7 @@ type data struct {
 
 type DailyResponse struct {
 	Metadata   metadata        `json:"Meta Data,omitempty"`
-	TimeSeries map[string]data `json:"Time Series (Daily),omitempty"`
+	TimeSeries map[string]Data `json:"Time Series (Daily),omitempty"`
 }
 
 // NewAlphaVantage return a pointer of AlphaVantage instance
