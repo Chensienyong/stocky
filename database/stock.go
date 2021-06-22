@@ -27,8 +27,8 @@ func (pg *Postgres) CreateStock(stock entity.Stock) (entity.Stock, error) {
 
 	err := pg.Db.Table(TableStock).Create(&stock).Scan(&newStock)
 	if err.Error != nil {
-		return stock, err.Error
+		return newStock, err.Error
 	}
 
-	return stock, nil
+	return newStock, nil
 }
