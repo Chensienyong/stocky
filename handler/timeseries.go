@@ -20,17 +20,20 @@ func (h *Handler) FetchDailyTimeSeries(w http.ResponseWriter, r *http.Request, p
 		Error(w, err)
 		return err
 	}
+
 	err = h.stocky.Postgres.DeleteDailies(stock.ID)
 	if err != nil {
 		Error(w, err)
 		return err
 	}
+
 	dailies := entity.CreateDailyBatch(stock.ID, dailyseries)
 	err = h.stocky.Postgres.InsertDailies(dailies)
 	if err != nil {
 		Error(w, err)
 		return err
 	}
+
 	stockDailySeries, err := h.stocky.Postgres.FetchDailySeriesByStock(stock.ID)
 	if err != nil {
 		Error(w, err)
