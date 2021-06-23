@@ -51,6 +51,7 @@ func main() {
 
 	decorator := []middleware.Decorator{middleware.WithBasicAuth(os.Getenv("STOCKY_USER"), os.Getenv("STOCKY_PASSWORD"))}
 	router.GET("/healthz", handler.Healthz)
+	router.GET("/stocks", apply(handler.GetStocks, decorator...))
 	router.GET("/time-series/:stock/dailies", apply(handler.FetchDailyTimeSeries, decorator...))
 
 	co := cors.New(cors.Options{

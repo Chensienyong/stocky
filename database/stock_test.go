@@ -107,3 +107,31 @@ func TestPostgres_CreateStock_Success(t *testing.T) {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 }
+
+func TestPostgres_GetStocks(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	rows := sqlmock.NewRows([]string{"id", "stock_symbol"})
+	rows.AddRow("1", "AAPL")
+	rows.AddRow("2", "GOOGL")
+
+	mock.ExpectQuery("^SELECT (.+)").WillReturnRows(rows)
+
+	pg := database.Postgres{}
+	pg.Db, err = gorm.Open(postgres.New(postgres.Config{Conn: db}), &gorm.Config{})
+	assert.NoError(t, err)
+
+	res, err := pg.GetStocks()
+
+	assert.Nil(t, err)
+	assert.Equal(t, "AAPL", res[0].StockSymbol)
+
+	// we make sure that all expectations were met
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}

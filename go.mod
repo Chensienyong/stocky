@@ -4,6 +4,7 @@ go 1.11
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/alicebob/miniredis/v2 v2.15.0 // indirect
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/julienschmidt/httprouter v1.2.0

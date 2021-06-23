@@ -32,3 +32,14 @@ func (pg *Postgres) CreateStock(stock entity.Stock) (entity.Stock, error) {
 
 	return newStock, nil
 }
+
+func (pg *Postgres) GetStocks() ([]entity.Stock, error) {
+	var stocks []entity.Stock
+
+	err := pg.Db.Table(TableStock).Select("*").Order("stock_symbol ASC").Find(&stocks)
+	if err.Error != nil {
+		return stocks, err.Error
+	}
+
+	return stocks, nil
+}
