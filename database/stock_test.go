@@ -1,6 +1,7 @@
 package database_test
 
 import (
+	"github.com/chensienyong/stocky/customerror"
 	"github.com/chensienyong/stocky/database"
 	"github.com/chensienyong/stocky/entity"
 	"gorm.io/driver/postgres"
@@ -73,6 +74,33 @@ func TestPostgres_GetOrCreateStock_NoRecordAndCreate(t *testing.T) {
 	}
 }
 
+func TestPostgres_GetOrCreateStock_DBError(t *testing.T) {
+	stockSymbol := "GGRM"
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	rows := sqlmock.NewRows([]string{"id", "stock_symbol"})
+	rows.AddRow("1", stockSymbol)
+
+	mock.ExpectQuery("^SELECT (.+)").WillReturnError(customerror.DBError)
+
+	pg := database.Postgres{}
+	pg.Db, err = gorm.Open(postgres.New(postgres.Config{Conn: db}), &gorm.Config{})
+	assert.NoError(t, err)
+
+	_, err = pg.GetOrCreateStock(stockSymbol)
+
+	assert.Equal(t, customerror.DBError, err)
+
+	// we make sure that all expectations were met
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
 func TestPostgres_CreateStock_Success(t *testing.T) {
 	stock := entity.Stock{
 		StockSymbol: "GGRM",
@@ -129,6 +157,33 @@ func TestPostgres_GetStocks(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, "AAPL", res[0].StockSymbol)
+
+	// we make sure that all expectations were met
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func TestPostgres_GetStocks_DBError(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	rows := sqlmock.NewRows([]string{"id", "stock_symbol"})
+	rows.AddRow("1", "AAPL")
+	rows.AddRow("2", "GOOGL")
+
+	mock.ExpectQuery("^SELECT (.+)").WillReturnError(customerror.DBError)
+
+	pg := database.Postgres{}
+	pg.Db, err = gorm.Open(postgres.New(postgres.Config{Conn: db}), &gorm.Config{})
+	assert.NoError(t, err)
+
+	_, err = pg.GetStocks()
+
+	assert.Equal(t, customerror.DBError, err)
 
 	// we make sure that all expectations were met
 	if err := mock.ExpectationsWereMet(); err != nil {

@@ -102,6 +102,37 @@ func TestPostgres_InsertDailies_Success(t *testing.T) {
 	}
 }
 
+func TestPostgres_InsertDailies_Fail(t *testing.T) {
+	data := []entity.Daily{
+		{
+			StockID: 1, Date: "2018-04-05", Open: 3.4, High: 5.6, Low: 1.2, Close: 4.5, Volume: 100,
+		},
+	}
+
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	mock.ExpectBegin()
+	mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "dailies" ("stock_id","date","open","high","low","close","volume") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "id"`)).WithArgs(data[0].StockID, data[0].Date, data[0].Open, data[0].High, data[0].Low, data[0].Close, data[0].Volume).
+		WillReturnError(customerror.DBError)
+
+	pg := database.Postgres{}
+	pg.Db, err = gorm.Open(postgres.New(postgres.Config{Conn: db}), &gorm.Config{})
+	assert.NoError(t, err)
+
+	err = pg.InsertDailies(data)
+
+	assert.Equal(t, customerror.DBError, err)
+
+	// we make sure that all expectations were met
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
 func TestPostgres_DeleteDailies_Success(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
