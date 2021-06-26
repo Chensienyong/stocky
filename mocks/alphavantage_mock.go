@@ -5,13 +5,13 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// AlphaVantage is a mock struct for alphavantage
-type AlphaVantage struct {
+// AlphaVantageMock is a mock struct for alphavantage
+type AlphaVantageMock struct {
 	mock.Mock
 }
 
 // GetDaily is a mock for alphavantage service GetDaily function
-func (av *AlphaVantage) GetDaily(stockSymbol string) (connection.DailyResponse, error) {
+func (av *AlphaVantageMock) GetDaily(stockSymbol string) (connection.DailyResponse, error) {
 	args := av.Called(stockSymbol)
 	res := args.Get(0)
 

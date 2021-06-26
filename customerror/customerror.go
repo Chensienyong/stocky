@@ -14,4 +14,5 @@ func New(httpStatusCode, code int, message, field string) response.CustomError {
 var (
 	RecordNotFound = New(http.StatusNotFound, 404, "Record Not Found", "")
 	DBError = New(http.StatusInternalServerError, 500, "Issue with Database", "")
+	RedisError = New(http.StatusInternalServerError, 500, "Issue with Redis", "")
 )

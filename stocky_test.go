@@ -9,7 +9,7 @@ import (
 func TestNewStocky(t *testing.T) {
 	pg    := &mocks.PostgresMock{}
 	redis := &mocks.RedisMock{}
-	alpha := &mocks.AlphaVantage{}
+	alpha := &mocks.AlphaVantageMock{}
 
 	stocky := NewStocky(pg, redis, alpha)
 

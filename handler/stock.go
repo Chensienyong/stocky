@@ -7,7 +7,7 @@ import (
 
 //GetStocks is used to get list of stock
 func (h *Handler) GetStocks(w http.ResponseWriter, r *http.Request, _ httprouter.Params) error {
-	stocks, err := h.stocky.Postgres.GetStocks()
+	stocks, err := h.Stocky.Postgres.GetStocks()
 	if err != nil {
 		Error(w, err)
 		return err

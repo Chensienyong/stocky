@@ -11,7 +11,7 @@ import (
 
 // Handler controls request flow from client to service.
 type Handler struct {
-	stocky *stck.Stocky
+	Stocky *stck.Stocky
 }
 
 // Meta is used to consolidate all meta statuses.
@@ -22,7 +22,7 @@ type Meta struct {
 // NewHandler returns a pointer of Handler instance.
 func NewHandler(stocky *stck.Stocky) *Handler {
 	return &Handler{
-		stocky: stocky,
+		Stocky: stocky,
 	}
 }
 

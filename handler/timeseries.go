@@ -13,14 +13,14 @@ import (
 func (h *Handler) FetchDailyTimeSeries(w http.ResponseWriter, r *http.Request, params httprouter.Params) error {
 	stockSymbol := params.ByName("stock")
 
-	stock, err := h.stocky.Postgres.GetOrCreateStock(stockSymbol)
+	stock, err := h.Stocky.Postgres.GetOrCreateStock(stockSymbol)
 	if err != nil {
 		Error(w, err)
 		return err
 	}
 
 	redisKey := fmt.Sprintf("stocky_%s", stockSymbol)
-	_, err = h.stocky.Redis.Get(redisKey)
+	_, err = h.Stocky.Redis.Get(redisKey)
 	if err == redis.Nil {
 		err = h.updateDaily(stockSymbol, redisKey, stock.ID)
 		if err != nil {
@@ -32,7 +32,7 @@ func (h *Handler) FetchDailyTimeSeries(w http.ResponseWriter, r *http.Request, p
 		return err
 	}
 
-	stockDailySeries, err := h.stocky.Postgres.FetchDailySeriesByStock(stock.ID)
+	stockDailySeries, err := h.Stocky.Postgres.FetchDailySeriesByStock(stock.ID)
 	if err != nil {
 		Error(w, err)
 		return err
@@ -43,23 +43,23 @@ func (h *Handler) FetchDailyTimeSeries(w http.ResponseWriter, r *http.Request, p
 }
 
 func (h *Handler) updateDaily(stockSymbol, redisKey string, stockID int64) error {
-	dailyseries, err := h.stocky.AlphaVantage.GetDaily(stockSymbol)
+	dailyseries, err := h.Stocky.AlphaVantage.GetDaily(stockSymbol)
 	if err != nil {
 		return err
 	}
 
-	err = h.stocky.Postgres.DeleteDailies(stockID)
+	err = h.Stocky.Postgres.DeleteDailies(stockID)
 	if err != nil {
 		return err
 	}
 
 	dailies := entity.CreateDailyBatch(stockID, dailyseries)
-	err = h.stocky.Postgres.InsertDailies(dailies)
+	err = h.Stocky.Postgres.InsertDailies(dailies)
 	if err != nil {
 		return err
 	}
 
-	err = h.stocky.Redis.SetEx(redisKey, "exists", time.Hour)
+	err = h.Stocky.Redis.SetEx(redisKey, "exists", time.Hour)
 	if err != nil {
 		return err
 	}
